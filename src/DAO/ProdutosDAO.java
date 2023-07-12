@@ -19,7 +19,7 @@ import modelos.ProdutosDTO;
 
 public class ProdutosDAO {
 
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+   
 
     public boolean cadastrarProduto(ProdutosDTO produto) {
         int id = 0;
@@ -58,6 +58,47 @@ public class ProdutosDAO {
 
     public ArrayList<ProdutosDTO> listarProdutos() {
 
+        ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+        
+         
+        String sql = "SELECT * FROM produtos";
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        ResultSet rset = null;
+        
+        try{
+            
+            conn = conectaDAO.connectDB();
+            pstm = conn.prepareStatement(sql);
+            rset = pstm.executeQuery();
+            
+            while(rset.next()){
+                
+                ProdutosDTO p = new ProdutosDTO();
+                
+                p.setId(rset.getInt("id"));
+                p.setNome(rset.getString("nome"));
+                p.setStatus(rset.getString("status"));
+                p.setValor(rset.getInt("valor"));
+                
+                listagem.add(p);
+                
+            }
+            
+        }catch(SQLException e){
+            System.out.println("Erro de conexão " + e.getMessage());
+        }finally{
+            
+            try{
+                if(pstm != null){ pstm.close(); }
+                if(conn != null){ conn.close(); }
+                
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            
+        }
+        
         return listagem;
     }
 
